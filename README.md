@@ -2,6 +2,9 @@
 
 Road Traffic Injuries (RTI) Handler Project
 
+# introduction
+Road Traffic Injury (RTI) handler is an application used in management of emergencies due to road crash. The handler automates the process of the road injuries and supports timely notification of the nearest medical Centre for immediate intervention through dispatch of medical staff and booking of emergency room for rapid intervention. The RTI DB runs on Postgres and it stores information about road injuries.  
+
 
 # Install the following as per requirements.txt file
 pipenv shell
