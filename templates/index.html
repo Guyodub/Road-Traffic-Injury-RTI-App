@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../static/style.css" />
+    <title>Please report road injuries using this handler</title>
+  </head>
+  <body>
+    <div class="container">
+      <img src="../static/road.jpg" alt="rti" class="logo" />
+      {% if message %}
+      <p class="message">{{ message | safe }}</p>
+      {% endif %}
+      <form action="/submit" method="POST">
+        <div class="form-group">
+          <h3>Time</h3>
+          <input
+            type="datetime-local"
+            name="time"
+            placeholder="time of crash"
+          />
+        </div>
+        <div class="form-group">
+          <h3>Vehicle Type</h3>
+          <input
+            type="text"
+            name="vtype"
+            placeholder="Type of vehicle"
+          />
+        </div>
+        <div class="form-group">
+          <h3>Number of people involved</h3>
+          <input
+            type="number"
+            name="people"
+            placeholder="Number of people involved"
+          />
+        </div>
+        <div class="form-group">
+          <h3>Location of accident</h3> 
+          <select name="location">
+            <option value="">Select location</option>
+            <option value="kgl_01">nyarugenge</option>
+            <option value="kgl_02">gasabo</option>
+            <option value="Nyambugogo">Nyabugogo</option>
+            <option value="Nyamirambo">Nyamirambo</option>
+            <option value="Kigali City">Kigali City</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <h3>Please rate the severiety of the injuries</h3>
+          <input type="radio" name="rating" value="red" /> Red
+          <input type="radio" name="rating" value="yellow" /> Yellow
+          <input type="radio" name="rating" value="green" /> Green
+        </div>
+          <div class="form-group">
+            <h3>Geolocation</h3>
+            <input
+              type="number"
+              step = "any"
+              name="latitude"
+              placeholder="latitude"
+            />
+            <input
+            type="number"
+            step = "any"
+            name="longitude"
+            placeholder="longitude"
+          />
+          </div>
+          <div class="form-group">
+            <h3>Reporting Officer</h3>
+            <input
+              type="text"
+              name="officer"
+              placeholder="Name of officer reporting the incident"
+            />
+          </div>
+          <input type="submit" value="Submit" class="btn" />
+        </div>
+        
+      </form>
+    </div>
+  </body>
+</html>
