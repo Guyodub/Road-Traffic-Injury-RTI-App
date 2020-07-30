@@ -1,0 +1,61 @@
+##Database Trigger:
+
+Triggers
+A database triggers is procedures code that is automatically executed in response to a certain event on particular table in database.
+This projects uses trigger to  achieve the following functionalities:
+1.	Notification of the nearest medical centre in case of any report of a road crash.
+2.	Rapid booking of emergency rooms if the injury is reported as critical.
+
+The distance to the nearest medical centre is calculated from geolocation (latitude, longitude) using euclidean distance measure. A notification is then sent to the nearest centre meaning the centre with the shortest distance from the place of injury.
+
+###Syntax for trigger:
+
+CREATE OR REPLACE FUNCTION adding_msg_booking() RETURNS TRIGGER AS $msg_table$
+declare len_center integer;
+declare name_center varchar(200);
+declare long_search float;
+declare lat_search float;
+declare dist float;
+declare min_d float;
+declare key_name varchar(200);
+declare in_lat float;
+declare in_long float;
+BEGIN
+len_center:= (select count(*) from center);
+in_lat:=new.latitude;
+in_long:=new.longitude;
+delete from data;
+for i in 1..len_center LOOP
+		name_center:= (select name from center where center_id=i);
+		long_search:= (select longitude from center where center_id=i);
+		lat_search:= (select latitude from center where center_id=i);
+		dist:=2 * 3961 * asin(sqrt((sin(radians((lat_search - in_lat) / 2))) ^ 2 + cos(radians(in_lat)) * cos(radians(lat_search)) * (sin(radians((long_search - in_long) / 2))) ^ 2));
+		insert into data(center,longitude,latitude,distance) values (name_center,long_search,lat_search,dist);	
+END LOOP;
+min_d:=(select min(distance) from data);
+key_name:=(select center from data where distance=min_d);
+INSERT INTO alert_message(center,entry_date,description)VALUES (key_name, current_timestamp, 
+concat(
+'reporting officer: ', new.officer,'.',
+'crush details:  ',
+new.vehicles,
+' , with number of peple of : ',
+new.n_people,
+' at location of longitude and latitude of:  ',
+new.longitude,
+' ,',
+new.latitude,
+' , the severity is : ',
+new.severity
+));
+if new.severity='red'
+then
+insert into booking (room_number,center,date) SELECT floor(random()*(100-1+1))+1,key_name,current_timestamp;
+ end if;
+ RETURN NEW;
+ END;
+$msg_table$ LANGUAGE plpgsql;
+CREATE TRIGGER msg_trigger AFTER INSERT ON injuries
+FOR EACH ROW EXECUTE PROCEDURE adding_msg_booking();
+
+
